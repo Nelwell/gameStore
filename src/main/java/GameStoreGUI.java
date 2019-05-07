@@ -79,10 +79,31 @@ public class GameStoreGUI extends JFrame {
         PS4RadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                xboxRadioButton.setSelected(false);
+                nintendoRadioButton.setSelected(false);
                 configureProductTable();
             }
         });
 
-    }
+        xboxRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PS4RadioButton.setSelected(false);
+                nintendoRadioButton.setSelected(false);
+                configureProductTable();
 
+            }
+        });
+
+        nintendoRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                xboxRadioButton.setSelected(false);
+                PS4RadioButton.setSelected(false);
+                configureProductTable();
+
+            }
+        });
+    }
 }
+

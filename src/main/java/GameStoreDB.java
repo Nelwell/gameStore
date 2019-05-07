@@ -20,6 +20,9 @@ public class GameStoreDB {
     //Xbox Filter statement query strings
     private static final String ALL_XBOX_FILTER = "SELECT * FROM inventory WHERE platform LIKE 'Xbox'";
 
+    // Nintendo
+    private static final String ALL_NINTENDO_FILTER = "SELECT * FROM inventory WHERE platform LIKE 'Nintendo Switch'";
+
     public static ArrayList<String> getCategories() {
 
         ArrayList<String> allCategories = new ArrayList<>();
@@ -79,12 +82,11 @@ public class GameStoreDB {
             if (selectedCategory.equals("All")) {
                 category = statement.executeQuery(GET_ALL_CATEGORIES);
                 if (PS4RadioButton.isSelected()) {
-                    xboxRadioButton.setSelected(false);
-                    nintendoRadioButton.setSelected(false);
                     category = statement.executeQuery(ALL_PS4_FILTER);
-//                } else{
-//                    PS4RadioButton.setSelected(false);
-//                    category = statement.executeQuery(ALL_XBOX_FILTER);
+                } else if (xboxRadioButton.isSelected()) {
+                    category = statement.executeQuery(ALL_XBOX_FILTER);
+                } else if (nintendoRadioButton.isSelected()) {
+                    category = statement.executeQuery(ALL_NINTENDO_FILTER);
                 }
                 vectors = getProductList(category);
             }
