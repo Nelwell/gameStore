@@ -58,10 +58,10 @@ public class GameStoreGUI extends JFrame {
     private void configureProductTable() {
 
         Vector columnNames = GameStoreDB.getColumnNames();
-        Vector<Vector> data = GameStoreDB.getCategoriesResultSet(CategoriesOptionsBox, PS4RadioButton, xboxRadioButton,
+        Vector<Vector> tableData = GameStoreDB.getCategoriesResultSet(CategoriesOptionsBox, PS4RadioButton, xboxRadioButton,
                 nintendoRadioButton);
 
-        DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
+        DefaultTableModel tableModel = new DefaultTableModel(tableData, columnNames);
         ProductBrowserTable.setModel(tableModel);
 
     }

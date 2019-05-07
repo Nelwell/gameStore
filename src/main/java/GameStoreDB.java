@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 // database communications
-public class GameStoreDB {
+class GameStoreDB {
     //Categorical statement query strings
     private static final String GET_ALL_CATEGORIES = "SELECT * FROM inventory";
     private static final String GET_CONSOLES = "SELECT * FROM inventory WHERE category LIKE 'Consoles'";
@@ -19,11 +19,17 @@ public class GameStoreDB {
 
     //Xbox Filter statement query strings
     private static final String ALL_XBOX_FILTER = "SELECT * FROM inventory WHERE platform LIKE 'Xbox'";
+    private static final String CONSOLE_XBOX_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Consoles' AND platform LIKE 'Xbox'";
+    private static final String ACCESSORIES_XBOX_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Accessories' AND platform LIKE 'Xbox'";
+    private static final String GAMES_XBOX_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Games' AND platform LIKE 'Xbox'";
 
     // Nintendo
     private static final String ALL_NINTENDO_FILTER = "SELECT * FROM inventory WHERE platform LIKE 'Nintendo Switch'";
+    private static final String CONSOLE_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Consoles' AND platform LIKE 'Nintendo'";
+    private static final String ACCESSORIES_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Accessories' AND platform LIKE 'Nintendo'";
+    private static final String GAMES_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Games' AND platform LIKE 'Nintendo'";
 
-    public static ArrayList<String> getCategories() {
+    static ArrayList<String> getCategories() {
 
         ArrayList<String> allCategories = new ArrayList<>();
         ArrayList<String> duplicateCategoriesRemoved = new ArrayList<>();
@@ -54,7 +60,7 @@ public class GameStoreDB {
 
     }
 
-    public static Vector getColumnNames() {
+    static Vector getColumnNames() {
 
         Vector<String> colNames = new Vector<String>();
 
@@ -67,83 +73,77 @@ public class GameStoreDB {
     }
 
 
-    public static Vector<Vector> getCategoriesResultSet(JComboBox<String> CategoriesOptionsBox, JRadioButton PS4RadioButton,
-                                                        JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton) {
+    static Vector<Vector> getCategoriesResultSet(JComboBox<String> CategoriesOptionsBox, JRadioButton PS4RadioButton,
+                                                 JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton) {
 
-        Vector<Vector> vectors = new Vector<>();
+        Vector<Vector> browserData = new Vector<>();
 
         try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
-             Statement statement = connection.createStatement()) {
+             Statement createStatement = connection.createStatement()) {
 
             String selectedCategory = (String) CategoriesOptionsBox.getSelectedItem();
 
-            ResultSet category;
-
             if (selectedCategory.equals("All")) {
-                category = statement.executeQuery(GET_ALL_CATEGORIES);
-                if (PS4RadioButton.isSelected()) {
-                    category = statement.executeQuery(ALL_PS4_FILTER);
-                } else if (xboxRadioButton.isSelected()) {
-                    category = statement.executeQuery(ALL_XBOX_FILTER);
-                } else if (nintendoRadioButton.isSelected()) {
-                    category = statement.executeQuery(ALL_NINTENDO_FILTER);
-                }
-                vectors = getProductList(category);
+
+                browserData = getFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton, createStatement, GET_ALL_CATEGORIES);
             }
             if (selectedCategory.equals("Consoles")) {
-                category = statement.executeQuery(GET_CONSOLES);
-                if (PS4RadioButton.isSelected()) {
-                    category = statement.executeQuery(CONSOLE_PS4_FILTER);
-                }
-                vectors = getProductList(category);
+                browserData = getFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton, createStatement, GET_CONSOLES);
             }
             if (selectedCategory.equals("Accessories")) {
-                category = statement.executeQuery(GET_ACCESSORIES);
-                if (PS4RadioButton.isSelected()) {
-                    category = statement.executeQuery(ACCESSORIES_PS4_FILTER);
-                }
-                vectors = getProductList(category);
+                browserData = getFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton, createStatement, GET_ACCESSORIES);
             }
             if (selectedCategory.equals("Games")) {
-                category = statement.executeQuery(GET_GAMES);
-                if (PS4RadioButton.isSelected()) {
-                    category = statement.executeQuery(GAMES_PS4_FILTER);
-                }
-                vectors = getProductList(category);
+                browserData = getFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton, createStatement, GET_GAMES);
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return vectors;
+        return browserData;
     }
 
-    public static Vector<Vector> getProductList(ResultSet category) throws SQLException {
+    private static Vector<Vector> getFilter(JRadioButton PS4RadioButton, JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton,
+                                            Statement createStatement, String categoryQuery) throws SQLException {
+        ResultSet selectedCategoryAndFilter;
+        Vector<Vector> productInfo;
+        selectedCategoryAndFilter = createStatement.executeQuery(categoryQuery);
+        if (PS4RadioButton.isSelected()) {
+            selectedCategoryAndFilter = createStatement.executeQuery(ALL_PS4_FILTER);
+        } else if (xboxRadioButton.isSelected()) {
+            selectedCategoryAndFilter = createStatement.executeQuery(ALL_XBOX_FILTER);
+        } else if (nintendoRadioButton.isSelected()) {
+            selectedCategoryAndFilter = createStatement.executeQuery(ALL_NINTENDO_FILTER);
+        }
+        productInfo = getProductList(selectedCategoryAndFilter);
+        return productInfo;
+    }
 
-        Vector<Vector> vectors = new Vector<>();
+    private static Vector<Vector> getProductList(ResultSet catAndFilter) throws SQLException {
+
+        Vector<Vector> productInfo = new Vector<>();
 
         String image;
         String name;
         String platform;
         double price;
 
-        while (category.next()) {
+        while (catAndFilter.next()) {
 
-            image = category.getString("PRODUCT_IMAGE");
-            name = category.getString("PRODUCT_NAME");
-            platform = category.getString("PLATFORM");
-            price = category.getDouble("PRICE");
+            image = catAndFilter.getString("PRODUCT_IMAGE");
+            name = catAndFilter.getString("PRODUCT_NAME");
+            platform = catAndFilter.getString("PLATFORM");
+            price = catAndFilter.getDouble("PRICE");
 
-            Vector v = new Vector();
+            Vector columnData = new Vector();
 
-            v.add(image);
-            v.add(name);
-            v.add(platform);
-            v.add(price);
+            columnData.add(image);
+            columnData.add(name);
+            columnData.add(platform);
+            columnData.add(price);
 
-            vectors.add(v);
+            productInfo.add(columnData);
         }
-        return vectors;
+        return productInfo;
 
     }
 }
