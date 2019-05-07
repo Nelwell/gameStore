@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class GameStoreGUI extends JFrame {
+
     private JPanel mainPanel;
     private JPanel ProductBrowserPanel, CheckOutPanel, ShoppingCartPanel;
     private JTextField customerNameTextField, shippingAddressTextField;
-    private JComboBox<String> CategoriesOptionsBox;
+    protected JComboBox<String> CategoriesOptionsBox;
     private JComboBox<String> SortingOptionsBox;
     private JButton placeOrderButton;
     private JTable ProductBrowserTable;
+    private JRadioButton PS4RadioButton, xboxRadioButton, nintendoRadioButton;
 
     GameStoreGUI() {
         setContentPane(mainPanel); // opens entire GUI form when run
@@ -52,10 +54,12 @@ public class GameStoreGUI extends JFrame {
 
     }
 
+
     private void configureProductTable() {
 
         Vector columnNames = GameStoreDB.getColumnNames();
-        Vector<Vector> data = GameStoreDB.getConsoles();
+        Vector<Vector> data = GameStoreDB.getCategoriesResultSet(CategoriesOptionsBox, PS4RadioButton, xboxRadioButton,
+                nintendoRadioButton);
 
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         ProductBrowserTable.setModel(tableModel);
@@ -68,13 +72,14 @@ public class GameStoreGUI extends JFrame {
         CategoriesOptionsBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                configureProductTable();
+            }
+        });
 
-                String selectedCategory = (String) CategoriesOptionsBox.getSelectedItem();
-
-                if (selectedCategory.equals("Consoles")) {
-                    configureProductTable();
-                }
-
+        PS4RadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                configureProductTable();
             }
         });
 

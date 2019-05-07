@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="GameStoreGUI">
-  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="13" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="879" height="714"/>
+      <xy x="20" y="20" width="1030" height="714"/>
     </constraints>
     <properties>
       <background color="-13882580"/>
@@ -13,12 +13,12 @@
     <children>
       <vspacer id="e799d">
         <constraints>
-          <grid row="2" column="6" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="12" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="b515e" class="javax.swing.JLabel">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+          <grid row="0" column="1" row-span="1" col-span="12" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="410" height="38"/>
           </grid>
         </constraints>
@@ -44,7 +44,7 @@
       </component>
       <component id="d0e1b" class="javax.swing.JLabel">
         <constraints>
-          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <background color="-3554620"/>
@@ -57,7 +57,7 @@
       </component>
       <component id="2f1a2" class="javax.swing.JLabel">
         <constraints>
-          <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="11" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <background color="-3554620"/>
@@ -71,7 +71,7 @@
       <grid id="d787c" binding="ProductBrowserPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="2" column="1" row-span="2" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="2" col-span="10" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <background color="-16777216"/>
@@ -81,7 +81,7 @@
         <children>
           <scrollpane id="d647c">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <foreground color="-4475461"/>
@@ -91,6 +91,7 @@
               <component id="3d281" class="javax.swing.JTable" binding="ProductBrowserTable">
                 <constraints/>
                 <properties>
+                  <background color="-4475461"/>
                   <font name="Segoe UI" size="14" style="1"/>
                   <foreground color="-16032853"/>
                   <selectionBackground color="-11645874"/>
@@ -107,7 +108,7 @@
       <grid id="7adaa" binding="ShoppingCartPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="11" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <background color="-3554620"/>
@@ -132,7 +133,7 @@
       <grid id="a2d4b" binding="CheckOutPanel" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="11" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <background color="-13882580"/>
@@ -310,7 +311,7 @@
       </grid>
       <hspacer id="399be">
         <constraints>
-          <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="0" indent="1" use-parent-layout="false">
+          <grid row="1" column="12" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="0" indent="1" use-parent-layout="false">
             <minimum-size width="1" height="1"/>
             <preferred-size width="1" height="1"/>
           </grid>
@@ -338,7 +339,7 @@
       </component>
       <component id="29c4d" class="javax.swing.JComboBox" binding="SortingOptionsBox">
         <constraints>
-          <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false">
+          <grid row="1" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="30"/>
           </grid>
         </constraints>
@@ -348,6 +349,71 @@
           <foreground color="-11645874"/>
         </properties>
       </component>
+      <component id="26604" class="javax.swing.JRadioButton" binding="nintendoRadioButton" default-binding="true">
+        <constraints>
+          <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-13882580"/>
+          <font name="Segoe UI" size="12"/>
+          <foreground color="-2962222"/>
+          <hideActionText value="true"/>
+          <horizontalAlignment value="2"/>
+          <text value="Nintendo"/>
+        </properties>
+      </component>
+      <component id="df884" class="javax.swing.JRadioButton" binding="xboxRadioButton" default-binding="true">
+        <constraints>
+          <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-13882580"/>
+          <font name="Segoe UI" size="12"/>
+          <foreground color="-2962222"/>
+          <hideActionText value="true"/>
+          <horizontalAlignment value="2"/>
+          <text value="Xbox"/>
+        </properties>
+      </component>
+      <component id="90f6e" class="javax.swing.JRadioButton" binding="PS4RadioButton" default-binding="true">
+        <constraints>
+          <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-13882580"/>
+          <font name="Segoe UI" size="12"/>
+          <foreground color="-2962222"/>
+          <hideActionText value="true"/>
+          <horizontalAlignment value="2"/>
+          <text value="PS4"/>
+        </properties>
+      </component>
+      <component id="2b312" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14" style="1"/>
+          <foreground color="-2962222"/>
+          <horizontalAlignment value="2"/>
+          <text value="Filter:"/>
+        </properties>
+      </component>
+      <hspacer id="98124">
+        <constraints>
+          <grid row="1" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <maximum-size width="15" height="15"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <hspacer id="e8def">
+        <constraints>
+          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="5" height="5"/>
+            <preferred-size width="10" height="10"/>
+          </grid>
+        </constraints>
+      </hspacer>
     </children>
   </grid>
 </form>
