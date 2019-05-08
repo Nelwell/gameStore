@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 // database communications
-public class GameStoreDB {
+class GameStoreDB {
     //Categorical statement query strings
     private static final String GET_ALL_CATEGORIES = "SELECT * FROM inventory";
     private static final String GET_CONSOLES = "SELECT * FROM inventory WHERE category LIKE 'Consoles'";
@@ -23,13 +23,16 @@ public class GameStoreDB {
     private static final String ACCESSORIES_XBOX_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Accessories' AND platform LIKE 'Xbox'";
     private static final String GAMES_XBOX_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Games' AND platform LIKE 'Xbox'";
 
-    // Nintendo
+    //Nintendo Filter statement query strings
     private static final String ALL_NINTENDO_FILTER = "SELECT * FROM inventory WHERE platform LIKE 'Nintendo Switch'";
     private static final String CONSOLE_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Consoles' AND platform LIKE 'Nintendo Switch'";
     private static final String ACCESSORIES_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Accessories' AND platform LIKE 'Nintendo Switch'";
     private static final String GAMES_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Games' AND platform LIKE 'Nintendo Switch'";
 
-    public static ArrayList<String> getCategories() {
+
+//    private static final String ADD_TO_CART = "INSERT INTO shopping_Cart selectedProduct VALUES ? ";
+
+    static ArrayList<String> getCategories() {
 
         ArrayList<String> allCategories = new ArrayList<>();
         ArrayList<String> duplicateCategoriesRemoved = new ArrayList<>();
@@ -60,10 +63,11 @@ public class GameStoreDB {
 
     }
 
-    public static Vector getColumnNames() {
+    static Vector getColumnNames() {
 
         Vector<String> colNames = new Vector<String>();
 
+        colNames.add("ID#");
         colNames.add("Product Image");
         colNames.add("Product");
         colNames.add("Platform");
@@ -73,8 +77,8 @@ public class GameStoreDB {
     }
 
 
-    public static Vector<Vector> getCategoriesResultSet(JComboBox<String> CategoriesOptionsBox, JRadioButton PS4RadioButton,
-                                                        JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton) {
+    static Vector<Vector> getCategoriesResultSet(JComboBox<String> CategoriesOptionsBox, JRadioButton PS4RadioButton,
+                                                 JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton) {
 
         Vector<Vector> browserData = new Vector<>();
 
@@ -127,10 +131,11 @@ public class GameStoreDB {
     }
 
 
-    public static Vector<Vector> getProductList(ResultSet catAndFilter) throws SQLException {
+    private static Vector<Vector> getProductList(ResultSet catAndFilter) throws SQLException {
 
         Vector<Vector> productInfo  = new Vector<>();
 
+        int id;
         String image;
         String name;
         String platform;
@@ -138,6 +143,7 @@ public class GameStoreDB {
 
         while (catAndFilter.next()) {
 
+            id = catAndFilter.getInt("ID");
             image = catAndFilter.getString("PRODUCT_IMAGE");
             name = catAndFilter.getString("PRODUCT_NAME");
             platform = catAndFilter.getString("PLATFORM");
@@ -145,13 +151,29 @@ public class GameStoreDB {
 
             Vector columnData = new Vector();
 
+            columnData.add(id);
             columnData.add(image);
             columnData.add(name);
             columnData.add(platform);
             columnData.add(price);
 
-            productInfo .add(columnData);
+            productInfo.add(columnData);
         }
         return productInfo ;
     }
+
+//    static void addToCart(String selectedProduct) {
+//
+//        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+//             PreparedStatement preparedStatement = connection.prepareStatement(ADD_TO_CART)) {
+//
+//            preparedStatement.setString(1, selectedProduct);
+//
+//            preparedStatement.executeUpdate();
+//
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 }
