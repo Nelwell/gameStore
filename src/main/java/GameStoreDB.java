@@ -5,6 +5,11 @@ import java.util.Vector;
 
 // database communications
 class GameStoreDB {
+
+    // creates new empty shopping cart table
+    private static final String CREATE_CART_TABLE = "CREATE TABLE shopping_cart (ID integer primary key, QUANTITY integer, PRODUCT text, PRICE double)";
+    private static final String CLEAR_CART_TABLE = "DROP TABLE shopping_cart";
+
     //Categorical statement query strings
     private static final String GET_ALL_CATEGORIES = "SELECT * FROM inventory";
     private static final String GET_CONSOLES = "SELECT * FROM inventory WHERE category LIKE 'Consoles'";
@@ -29,8 +34,24 @@ class GameStoreDB {
     private static final String ACCESSORIES_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Accessories' AND platform LIKE 'Nintendo Switch'";
     private static final String GAMES_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Games' AND platform LIKE 'Nintendo Switch'";
 
+    //Shopping Cart queries
+    private static final String ADD_TO_CART = "INSERT INTO shopping_cart (QUANTITY, PRODUCT, PRICE) VALUES ( ? , ? , ? )";
+    private static final String GET_ALL_CART_ITEMS = "SELECT * FROM shopping_cart";
 
-//    private static final String ADD_TO_CART = "INSERT INTO shopping_Cart selectedProduct VALUES ? ";
+    // drops table adn recreates new empty table
+    static void clearCart(){
+
+        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+             Statement statement = connection.createStatement()) {
+
+            statement.executeUpdate(CLEAR_CART_TABLE);
+            statement.executeUpdate(CREATE_CART_TABLE);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     static ArrayList<String> getCategories() {
 
@@ -74,6 +95,50 @@ class GameStoreDB {
         colNames.add("Price");
 
         return colNames;
+    }
+
+    static Vector getCartColumnNames() {
+
+        Vector<String> cartColNames = new Vector<String>();
+
+//        colNames.add("Product Image");
+        cartColNames.add("Quantity");
+        cartColNames.add("Product");
+        cartColNames.add("Price");
+
+        return cartColNames;
+    }
+
+    static Vector<Vector> getCartItems() {
+
+        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+             Statement statement = connection.createStatement()) {
+
+            ResultSet rs = statement.executeQuery(GET_ALL_CART_ITEMS);
+
+            Vector<Vector> vectors = new Vector<>();
+
+            int quantity;
+            String product;
+            double price;
+
+            while (rs.next()) {
+
+                quantity = rs.getInt("QUANTITY");
+                product = rs.getString("PRODUCT");
+                price = rs.getDouble("PRICE");
+
+                Vector v = new Vector();
+                v.add(quantity); v.add(product); v.add(price);
+
+                vectors.add(v);
+            }
+            return vectors;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 
@@ -136,9 +201,7 @@ class GameStoreDB {
         Vector<Vector> productInfo  = new Vector<>();
 
         int id;
-        String image;
-        String name;
-        String platform;
+        String image, name, platform;
         double price;
 
         while (catAndFilter.next()) {
@@ -162,18 +225,20 @@ class GameStoreDB {
         return productInfo ;
     }
 
-//    static void addToCart(String selectedProduct) {
-//
-//        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
-//             PreparedStatement preparedStatement = connection.prepareStatement(ADD_TO_CART)) {
-//
-//            preparedStatement.setString(1, selectedProduct);
-//
-//            preparedStatement.executeUpdate();
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//    }
+    static void addToCart(int quantity, String selectedProduct, double price) {
+
+        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+             PreparedStatement preparedStatement = connection.prepareStatement(ADD_TO_CART)) {
+
+            preparedStatement.setInt(1, quantity);
+            preparedStatement.setString(2, selectedProduct);
+            preparedStatement.setDouble(3, price);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
