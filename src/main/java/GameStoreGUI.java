@@ -58,8 +58,22 @@ public class GameStoreGUI extends JFrame {
         Vector<Vector> tableData = GameStoreDB.getCategoriesResultSet(CategoriesOptionsBox, PS4RadioButton, xboxRadioButton,
                 nintendoRadioButton);
 
-        DefaultTableModel tableModel = new DefaultTableModel(tableData, columnNames);
-        ProductBrowserTable.setModel(tableModel);
+//        DefaultTableModel tableModel = new DefaultTableModel(tableData, columnNames);
+        ProductBrowserTable.setModel(new DefaultTableModel(columnNames, tableData) {
+            Class[] types = { Integer.class, String.class, String.class,
+                    String.class, Double.class };
+            boolean[] canEdit = { false, false, false, false, false };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return this.types[columnIndex];
+            }
+
+            public boolean isCellEditable(int columnIndex) {
+                return this.canEdit[columnIndex];
+            }
+        });
+//        tableModel.fireTableDataChanged();
 
     }
 
