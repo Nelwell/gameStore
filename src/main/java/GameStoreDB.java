@@ -46,6 +46,7 @@ class GameStoreDB {
 
             statement.executeUpdate(CLEAR_CART_TABLE);
             statement.executeUpdate(CREATE_CART_TABLE);
+            getCartItems();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -142,6 +143,24 @@ class GameStoreDB {
     }
 
 
+    static void addToCart(int quantity, String selectedProduct, double price) {
+
+        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+             PreparedStatement preparedStatement = connection.prepareStatement(ADD_TO_CART)) {
+
+            preparedStatement.setInt(1, quantity);
+            preparedStatement.setString(2, selectedProduct);
+            preparedStatement.setDouble(3, price);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
     static Vector<Vector> getCategoriesResultSet(JComboBox<String> CategoriesOptionsBox, JRadioButton PS4RadioButton,
                                                  JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton) {
 
@@ -223,22 +242,5 @@ class GameStoreDB {
             productInfo.add(columnData);
         }
         return productInfo ;
-    }
-
-    static void addToCart(int quantity, String selectedProduct, double price) {
-
-        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
-             PreparedStatement preparedStatement = connection.prepareStatement(ADD_TO_CART)) {
-
-            preparedStatement.setInt(1, quantity);
-            preparedStatement.setString(2, selectedProduct);
-            preparedStatement.setDouble(3, price);
-
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 }

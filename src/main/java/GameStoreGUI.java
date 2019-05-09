@@ -17,6 +17,7 @@ public class GameStoreGUI extends JFrame {
     private JRadioButton PS4RadioButton, xboxRadioButton, nintendoRadioButton;
 
 
+
     GameStoreGUI() {
 
         setContentPane(mainPanel); // opens entire GUI form when run
@@ -45,6 +46,8 @@ public class GameStoreGUI extends JFrame {
         CategoriesOptionsBox.addItem(consoles);
         CategoriesOptionsBox.addItem(accessories);
         CategoriesOptionsBox.addItem(games);
+
+        ProductBrowserTable.setAutoCreateRowSorter(true);
 
     }
 
@@ -133,15 +136,15 @@ public class GameStoreGUI extends JFrame {
 
         int productQuantity = 1;
 
-        //Get selected product,
+        //Get selected product
         String selectedProduct = (String) ProductBrowserTable.getValueAt(ProductBrowserTable.getSelectedRow(), 2);
         double productPrice = (double) ProductBrowserTable.getValueAt(ProductBrowserTable.getSelectedRow(), 4);
 
-        //if no selected product blank
-        if (selectedProduct == null || selectedProduct.trim().equals("")) {
-            JOptionPane.showMessageDialog(rootPane, "Please select a product");
-            return;
-        }
+//        //If no selected product blank
+//        if (selectedProduct == null || selectedProduct.trim().equals("")) {
+//            JOptionPane.showMessageDialog(rootPane, "Please select a product");
+//            return;
+//        }
 
         GameStoreDB.addToCart(productQuantity, selectedProduct, productPrice);
 
