@@ -8,14 +8,16 @@ import java.util.Vector;
 public class GameStoreGUI extends JFrame {
 
     private JPanel mainPanel;
-    private JPanel ProductBrowserPanel, CheckOutPanel, ShoppingCartPanel;
+    private JPanel productBrowserPanel, checkOutPanel, shoppingCartPanel;
     private JTextField customerNameTextField, shippingAddressTextField;
-    protected JComboBox<String> CategoriesOptionsBox;
-    private JComboBox<String> SortingOptionsBox;
-    private JButton placeOrderButton, addToCartButton, clearCartButton;
-    private JTable ProductBrowserTable, ShoppingCartTable;
-    private JRadioButton PS4RadioButton, xboxRadioButton, nintendoRadioButton;
+    protected JComboBox<String> categoriesOptionsBox;
+    private JComboBox<String> sortingOptionsBox;
+    private JButton placeOrderButton, addToCartButton, removeButton, clearCartButton;
+    private JTable productBrowserTable, shoppingCartTable;
+    private JRadioButton ps4RadioButton, xboxRadioButton, nintendoRadioButton;
 
+
+    Vector columnNames;
 
 
     GameStoreGUI() {
@@ -42,35 +44,35 @@ public class GameStoreGUI extends JFrame {
         String games = inventoryCategories.get(2);
 
         // adds category options to comboBox
-        CategoriesOptionsBox.addItem(all);
-        CategoriesOptionsBox.addItem(consoles);
-        CategoriesOptionsBox.addItem(accessories);
-        CategoriesOptionsBox.addItem(games);
+        categoriesOptionsBox.addItem(all);
+        categoriesOptionsBox.addItem(consoles);
+        categoriesOptionsBox.addItem(accessories);
+        categoriesOptionsBox.addItem(games);
 
-        ProductBrowserTable.setAutoCreateRowSorter(true);
+        productBrowserTable.setAutoCreateRowSorter(true);
 
     }
 
 
     private void configureProductTable() {
 
-        Vector columnNames = GameStoreDB.getColumnNames();
-        Vector<Vector> tableData = GameStoreDB.getCategoriesResultSet(CategoriesOptionsBox, PS4RadioButton, xboxRadioButton,
-                nintendoRadioButton);
+        // allows for only one row to be selected at a time
+        productBrowserTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-//        DefaultTableModel tableModel = new DefaultTableModel(tableData, columnNames);
-        ProductBrowserTable.setModel(new DefaultTableModel(columnNames, tableData) {
-            Class[] types = { Integer.class, String.class, String.class,
-                    String.class, Double.class };
-            boolean[] canEdit = { false, false, false, false, false };
+        Vector<Vector> tableData = GameStoreDB.getCategoriesResultSet(categoriesOptionsBox, ps4RadioButton, xboxRadioButton,
+                nintendoRadioButton);
+        columnNames = GameStoreDB.getColumnNames();
+
+        productBrowserTable.setModel(new DefaultTableModel(tableData, columnNames) {
+            Class[] types = { Integer.class, String.class, String.class, String.class, Double.class };
 
             @Override
             public Class getColumnClass(int columnIndex) {
                 return this.types[columnIndex];
             }
 
-            public boolean isCellEditable(int columnIndex) {
-                return this.canEdit[columnIndex];
+            public boolean isCellEditable(int row, int col) {
+                return false;
             }
         });
 //        tableModel.fireTableDataChanged();
@@ -80,25 +82,62 @@ public class GameStoreGUI extends JFrame {
 
     private void configureShoppingCartTable() {
 
-        Vector cartColumnNames = GameStoreDB.getCartColumnNames();
-        Vector<Vector> cartTableData = GameStoreDB.getCartItems();
+        // allows for only one row to be selected at a time
+        shoppingCartTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        DefaultTableModel cartTableModel = new DefaultTableModel(cartTableData, cartColumnNames);
-        ShoppingCartTable.setModel(cartTableModel);
+        Vector<Vector> cartTableData = GameStoreDB.getCartItems();
+        Vector cartColumnNames = GameStoreDB.getCartColumnNames();
+
+        // sets table model and assigns object types to each column in JTable
+        shoppingCartTable.setModel(new DefaultTableModel(cartTableData, cartColumnNames) {
+            Class[] types = { Integer.class, Integer.class, String.class, Double.class };
+            // assigns which columns are editable in shopping cart to variable
+            boolean[] canEdit = { true, false, false, false };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return this.types[columnIndex];
+            }
+            //allows for editing of only quantity column in shopping cart
+            public boolean isCellEditable(int row, int col) {
+                return this.canEdit[col];
+            }
+
+//            @Override
+//            public void setValueAt(Object val, int row, int col) {
+//
+//                // Get row and send new value to DB for update
+////                int id = (int) getValueAt(row, 0);
+//
+//                int stock = GameStoreDB.getAvailableStock();
+//
+//                System.out.println(stock);
+//
+//                try {
+//                    int cartQuantity = Integer.parseInt(val.toString());
+//                    if (cartQuantity > stock) {
+//                        throw new NumberFormatException();
+//                    }
+////                    updateTable();
+//                } catch (NumberFormatException e) {
+//                    JOptionPane.showMessageDialog(GameStoreGUI.this, "Not enough stock");
+//                }
+//            }
+        });
 
     }
 
 
     private void eventHandlers() {
 
-        CategoriesOptionsBox.addActionListener(new ActionListener() {
+        categoriesOptionsBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 configureProductTable();
             }
         });
 
-        PS4RadioButton.addActionListener(new ActionListener() {
+        ps4RadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // deselects other radio button filter options
@@ -112,7 +151,7 @@ public class GameStoreGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // deselects other radio button filter options
-                PS4RadioButton.setSelected(false);
+                ps4RadioButton.setSelected(false);
                 nintendoRadioButton.setSelected(false);
                 configureProductTable();
 
@@ -124,7 +163,7 @@ public class GameStoreGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // deselects other radio button filter options
                 xboxRadioButton.setSelected(false);
-                PS4RadioButton.setSelected(false);
+                ps4RadioButton.setSelected(false);
                 configureProductTable();
 
             }
@@ -137,6 +176,13 @@ public class GameStoreGUI extends JFrame {
             }
         });
 
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteProductFromCart();
+            }
+        });
+
         clearCartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -146,32 +192,61 @@ public class GameStoreGUI extends JFrame {
 
         }
 
-    private void addProductToCart() {
+    private void deleteAllFromCart() {
 
+    }
+
+    private void addProductToCart() {
+        // default quantity added to cart
         int productQuantity = 1;
 
-        //Get selected product
-        String selectedProduct = (String) ProductBrowserTable.getValueAt(ProductBrowserTable.getSelectedRow(), 2);
-        double productPrice = (double) ProductBrowserTable.getValueAt(ProductBrowserTable.getSelectedRow(), 4);
+        // Get selected product info
+        int productId = (int) productBrowserTable.getValueAt(productBrowserTable.getSelectedRow(), 0);
+        String selectedProduct = (String) productBrowserTable.getValueAt(productBrowserTable.getSelectedRow(), 2);
+        double productPrice = (double) productBrowserTable.getValueAt(productBrowserTable.getSelectedRow(), 4);
 
-//        //If no selected product blank
+//        // If no selected product blank
 //        if (selectedProduct == null || selectedProduct.trim().equals("")) {
 //            JOptionPane.showMessageDialog(rootPane, "Please select a product");
 //            return;
 //        }
 
-        GameStoreDB.addToCart(productQuantity, selectedProduct, productPrice);
+        GameStoreDB.addToCart(productId, productQuantity, selectedProduct, productPrice);
 
 //            //Using a spinner means we are guaranteed to get a number in the range we set, so no validation needed.
 //            int ratingData = (Integer) (ratingSpinner.getValue());
 
         configureShoppingCartTable();
 
-//        updateCartTable(); // ??
+    }
+
+    private void deleteProductFromCart() {
+
+        // Get selected product
+        int selectedProduct = (int) shoppingCartTable.getValueAt(shoppingCartTable.getSelectedRow(), 0);
+
+//        // If no selected product blank
+//        if (selectedProduct == null || selectedProduct.trim().equals("")) {
+//            JOptionPane.showMessageDialog(rootPane, "Please select a product");
+//            return;
+//        }
+
+        GameStoreDB.deleteFromCart(selectedProduct);
+
+//            //Using a spinner means we are guaranteed to get a number in the range we set, so no validation needed.
+//            int ratingData = (Integer) (ratingSpinner.getValue());
+
+        configureShoppingCartTable();
+
+    }
+
+//    private void updateTable() {
+//
+//        Vector data = GameStoreDB.getCategoriesResultSet(categoriesOptionsBox, ps4RadioButton, xboxRadioButton,
+//                nintendoRadioButton);
+//        DefaultTableModel.setDataVector(data, columnNames);
 //
 //    }
-//
-//    private void updateCartTable() {
-    }
+
 }
 

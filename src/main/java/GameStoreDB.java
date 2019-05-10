@@ -6,9 +6,11 @@ import java.util.Vector;
 // database communications
 class GameStoreDB {
 
-    // creates new empty shopping cart table
-    private static final String CREATE_CART_TABLE = "CREATE TABLE shopping_cart (ID integer primary key, QUANTITY integer, PRODUCT text, PRICE double)";
-    private static final String CLEAR_CART_TABLE = "DROP TABLE shopping_cart";
+    // gets current stock for product
+    private static final String GET_PRODUCT_STOCK = "SELECT stock FROM inventory WHERE product_name LIKE 'PS4 System'";
+
+//    private static final String CREATE_CART_TABLE = "CREATE TABLE shopping_cart (ID integer primary key, QUANTITY integer, PRODUCT text, PRICE double)";
+    private static final String CLEAR_CART_TABLE = "DELETE FROM shopping_cart";
 
     //Categorical statement query strings
     private static final String GET_ALL_CATEGORIES = "SELECT * FROM inventory";
@@ -35,18 +37,19 @@ class GameStoreDB {
     private static final String GAMES_NINTENDO_FILTER = "SELECT * FROM inventory WHERE category LIKE 'Games' AND platform LIKE 'Nintendo Switch'";
 
     //Shopping Cart queries
-    private static final String ADD_TO_CART = "INSERT INTO shopping_cart (QUANTITY, PRODUCT, PRICE) VALUES ( ? , ? , ? )";
+    private static final String ADD_TO_CART = "INSERT INTO shopping_cart (ID, QUANTITY, PRODUCT, PRICE) VALUES ( ? , ? , ? , ? )";
+    private static final String DELETE_FROM_CART = "DELETE FROM shopping_cart WHERE ID = ( ? )";
     private static final String GET_ALL_CART_ITEMS = "SELECT * FROM shopping_cart";
 
-    // drops table adn recreates new empty table
+    // drops table and recreates new empty table
     static void clearCart(){
 
         try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
              Statement statement = connection.createStatement()) {
 
             statement.executeUpdate(CLEAR_CART_TABLE);
-            statement.executeUpdate(CREATE_CART_TABLE);
             getCartItems();
+//            GameStoreGUI.configureShoppingCartTable();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -89,11 +92,11 @@ class GameStoreDB {
 
         Vector<String> colNames = new Vector<String>();
 
-        colNames.add("ID#");
+        colNames.add("ID #");
         colNames.add("Product Image");
         colNames.add("Product");
         colNames.add("Platform");
-        colNames.add("Price");
+        colNames.add("Price ($)");
 
         return colNames;
     }
@@ -103,9 +106,10 @@ class GameStoreDB {
         Vector<String> cartColNames = new Vector<String>();
 
 //        colNames.add("Product Image");
+        cartColNames.add("ID #");
         cartColNames.add("Quantity");
         cartColNames.add("Product");
-        cartColNames.add("Price");
+        cartColNames.add("Price ($)");
 
         return cartColNames;
     }
@@ -119,18 +123,20 @@ class GameStoreDB {
 
             Vector<Vector> vectors = new Vector<>();
 
+            int id;
             int quantity;
             String product;
             double price;
 
             while (rs.next()) {
 
+                id = rs.getInt("ID");
                 quantity = rs.getInt("QUANTITY");
                 product = rs.getString("PRODUCT");
                 price = rs.getDouble("PRICE");
 
                 Vector v = new Vector();
-                v.add(quantity); v.add(product); v.add(price);
+                v.add(id); v.add(quantity); v.add(product); v.add(price);
 
                 vectors.add(v);
             }
@@ -143,14 +149,31 @@ class GameStoreDB {
     }
 
 
-    static void addToCart(int quantity, String selectedProduct, double price) {
+    static void addToCart(int productId, int quantity, String selectedProduct, double price) {
 
         try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
-             PreparedStatement preparedStatement = connection.prepareStatement(ADD_TO_CART)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(ADD_TO_CART)) {
 
-            preparedStatement.setInt(1, quantity);
-            preparedStatement.setString(2, selectedProduct);
-            preparedStatement.setDouble(3, price);
+            preparedStatement.setInt(1, productId);
+            preparedStatement.setInt(2, quantity);
+            preparedStatement.setString(3, selectedProduct);
+            preparedStatement.setDouble(4, price);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    static void deleteFromCart(int selectedProduct) {
+
+        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_CART)) {
+
+            preparedStatement.setInt(1, selectedProduct);
 
             preparedStatement.executeUpdate();
 
@@ -242,5 +265,25 @@ class GameStoreDB {
             productInfo.add(columnData);
         }
         return productInfo ;
+    }
+
+    static int getAvailableStock(){
+
+        int stockToInt = 0;
+
+        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+             Statement statement = connection.createStatement()) {
+
+            ResultSet stockResultSet = statement.executeQuery(GET_PRODUCT_STOCK); // Use executeQuery. It returns a ResultSet
+
+            while (stockResultSet.next()) {  // Have to loop over the ResultSet to read it. Loop reads one row at a time
+                String stock = stockResultSet.getString("STOCK"); // Can get data from each column, by column name
+                stockToInt = Integer.parseInt(stock);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return stockToInt;
     }
 }
