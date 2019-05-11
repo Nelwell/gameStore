@@ -125,6 +125,12 @@ public class GameStoreGUI extends JFrame {
 //            }
         });
 
+        if (shoppingCartTable.getRowCount() > 0) { //&& removeButton.isSelected()) {
+            System.out.println(shoppingCartTable.getRowCount());
+            shoppingCartTable.setRowSelectionInterval(0, 0);
+        }
+
+
     }
 
 
@@ -197,6 +203,7 @@ public class GameStoreGUI extends JFrame {
     }
 
     private void addProductToCart() {
+
         // default quantity added to cart
         int productQuantity = 1;
 
