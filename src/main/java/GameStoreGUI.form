@@ -61,8 +61,8 @@
           <grid row="2" column="1" row-span="2" col-span="9" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-16777216"/>
-          <foreground color="-2699050"/>
+          <background color="-10253653"/>
+          <foreground color="-10253653"/>
         </properties>
         <border type="none"/>
         <children>
@@ -71,16 +71,17 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-4475461"/>
+              <background color="-10253653"/>
+              <foreground color="-10253653"/>
             </properties>
             <border type="none"/>
             <children>
               <component id="3d281" class="javax.swing.JTable" binding="productBrowserTable">
                 <constraints/>
                 <properties>
-                  <background color="-4475461"/>
+                  <background color="-8540713"/>
                   <font name="Segoe UI" size="14" style="1"/>
-                  <foreground color="-16032853"/>
+                  <foreground color="-13882580"/>
                   <selectionBackground color="-11645874"/>
                   <selectionForeground color="-1537"/>
                 </properties>
@@ -98,7 +99,8 @@
           <grid row="2" column="10" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-3554620"/>
+          <background color="-10253653"/>
+          <foreground color="-10253653"/>
         </properties>
         <border type="none"/>
         <children>
@@ -107,16 +109,17 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-4475461"/>
+              <background color="-10253653"/>
+              <foreground color="-10253653"/>
             </properties>
             <border type="none"/>
             <children>
               <component id="cc1d4" class="javax.swing.JTable" binding="shoppingCartTable">
                 <constraints/>
                 <properties>
-                  <background color="-4475461"/>
+                  <background color="-8540713"/>
                   <font name="Segoe UI" size="14" style="1"/>
-                  <foreground color="-16032853"/>
+                  <foreground color="-13882580"/>
                   <selectionBackground color="-11645874"/>
                   <selectionForeground color="-1537"/>
                 </properties>
@@ -180,7 +183,7 @@
             <properties>
               <font name="Segoe UI" size="12" style="1"/>
               <foreground color="-2962222"/>
-              <text value="Taxes:"/>
+              <text value="Taxes: (7%)"/>
             </properties>
           </component>
           <component id="f73d9" class="javax.swing.JLabel">
@@ -201,7 +204,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="b82a9" class="javax.swing.JLabel">
+          <component id="b82a9" class="javax.swing.JLabel" binding="subtotalLabel">
             <constraints>
               <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -211,7 +214,7 @@
               <text value="0.00"/>
             </properties>
           </component>
-          <component id="4e96a" class="javax.swing.JLabel">
+          <component id="4e96a" class="javax.swing.JLabel" binding="taxesLabel">
             <constraints>
               <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -221,7 +224,7 @@
               <text value="0.00"/>
             </properties>
           </component>
-          <component id="932ca" class="javax.swing.JLabel">
+          <component id="932ca" class="javax.swing.JLabel" binding="totalLabel">
             <constraints>
               <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -249,7 +252,7 @@
               <text value="Shipping Fee:"/>
             </properties>
           </component>
-          <component id="f1272" class="javax.swing.JLabel">
+          <component id="f1272" class="javax.swing.JLabel" binding="shippingFeeLabel">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -304,9 +307,9 @@
               <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <background color="-11645874"/>
+              <background color="-8540713"/>
               <font name="Segoe UI" size="12" style="1"/>
-              <foreground color="-2962222"/>
+              <foreground color="-13882580"/>
               <text value="Place Order"/>
             </properties>
           </component>
@@ -335,9 +338,9 @@
           </grid>
         </constraints>
         <properties>
-          <background color="-2699050"/>
+          <background color="-8540713"/>
           <font name="Segoe UI" size="12" style="1"/>
-          <foreground color="-11645874"/>
+          <foreground color="-13882580"/>
         </properties>
       </component>
       <component id="26604" class="javax.swing.JRadioButton" binding="nintendoRadioButton" default-binding="true">
@@ -410,9 +413,9 @@
           <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-11645874"/>
+          <background color="-8540713"/>
           <font name="Segoe UI" size="12" style="1"/>
-          <foreground color="-2962222"/>
+          <foreground color="-13882580"/>
           <text value="Add To Cart"/>
         </properties>
       </component>
@@ -421,6 +424,9 @@
           <grid row="1" column="13" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <background color="-8540713"/>
+          <font name="Segoe UI" size="12" style="1"/>
+          <foreground color="-13882580"/>
           <text value="Clear Cart"/>
         </properties>
       </component>
@@ -434,6 +440,9 @@
           <grid row="1" column="12" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <background color="-8540713"/>
+          <font name="Segoe UI" size="12" style="1"/>
+          <foreground color="-13882580"/>
           <text value="Remove"/>
         </properties>
       </component>

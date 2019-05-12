@@ -8,13 +8,13 @@ import java.util.Vector;
 public class GameStoreGUI extends JFrame {
 
     private JPanel mainPanel;
-    private JPanel productBrowserPanel, checkOutPanel, shoppingCartPanel;
-    private JTextField customerNameTextField, shippingAddressTextField;
+    public JPanel productBrowserPanel, checkOutPanel, shoppingCartPanel;
+    public JTextField customerNameTextField, shippingAddressTextField;
     protected JComboBox<String> categoriesOptionsBox;
-    private JComboBox<String> sortingOptionsBox;
     private JButton placeOrderButton, addToCartButton, removeButton, clearCartButton;
-    private JTable productBrowserTable, shoppingCartTable;
+    public JTable productBrowserTable, shoppingCartTable;
     private JRadioButton ps4RadioButton, xboxRadioButton, nintendoRadioButton;
+    private JLabel shippingFeeLabel, subtotalLabel, taxesLabel, totalLabel;
 
 
     Vector columnNames;
@@ -92,13 +92,13 @@ public class GameStoreGUI extends JFrame {
         shoppingCartTable.setModel(new DefaultTableModel(cartTableData, cartColumnNames) {
             Class[] types = { Integer.class, Integer.class, String.class, Double.class };
             // assigns which columns are editable in shopping cart to variable
-            boolean[] canEdit = { true, false, false, false };
+            boolean[] canEdit = { false, true, false, false };
 
             @Override
             public Class getColumnClass(int columnIndex) {
                 return this.types[columnIndex];
             }
-            //allows for editing of only quantity column in shopping cart
+            // allows only quantity column in shopping cart to be edited
             public boolean isCellEditable(int row, int col) {
                 return this.canEdit[col];
             }
@@ -126,10 +126,8 @@ public class GameStoreGUI extends JFrame {
         });
 
         if (shoppingCartTable.getRowCount() > 0) { //&& removeButton.isSelected()) {
-            System.out.println(shoppingCartTable.getRowCount());
             shoppingCartTable.setRowSelectionInterval(0, 0);
         }
-
 
     }
 
@@ -172,6 +170,7 @@ public class GameStoreGUI extends JFrame {
                 ps4RadioButton.setSelected(false);
                 configureProductTable();
 
+
             }
         });
 
@@ -179,6 +178,7 @@ public class GameStoreGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addProductToCart();
+                calculateAndDisplayCosts();
             }
         });
 
@@ -186,6 +186,7 @@ public class GameStoreGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteProductFromCart();
+                calculateAndDisplayCosts();
             }
         });
 
@@ -254,6 +255,57 @@ public class GameStoreGUI extends JFrame {
 //        DefaultTableModel.setDataVector(data, columnNames);
 //
 //    }
+
+
+
+//            String size = (String) gardenSizeComboBox.getSelectedItem();
+//            double notSelected = 0.00;
+//            double mowingCost = GardenServiceData.MOWING;
+
+    // calculate amounts in checkOutPanel
+    private void calculateAndDisplayCosts() {
+
+        double subtotal = 0;
+        for (int i = 0; i < shoppingCartTable.getRowCount(); i++){
+            double amount = (double) shoppingCartTable.getValueAt(i, 3);
+            subtotal += amount;
+        }
+
+        double emptyCart = 0.00;
+        double shipFee = Fees.SHIPPING_FEE;
+        double taxRate = Fees.TAX_RATE;
+        double taxes = taxRate * subtotal;
+        double total = shipFee + subtotal + taxes;
+
+        if (shoppingCartTable.getRowCount() > 0) {
+            shippingFeeLabel.setText(String.format("%.2f", shipFee));
+            subtotalLabel.setText(String.format("%.2f", subtotal));
+            taxesLabel.setText(String.format("%.2f", taxes));
+            totalLabel.setText(String.format("%.2f", total));
+        } else {
+            shippingFeeLabel.setText(String.format("%.2f", emptyCart));
+            subtotalLabel.setText(String.format("%.2f", emptyCart));
+            taxesLabel.setText(String.format("%.2f", emptyCart));
+            totalLabel.setText(String.format("%.2f", emptyCart));
+        }
+
+        updateTotal();
+
+    }
+
+
+    private void updateTotal() {
+
+//        double taxes = Fees.TAXES;
+
+        double doubleShippingFee = Double.valueOf(this.shippingFeeLabel.getText());
+//        double doubleSubtotal = Double.valueOf(this.leafRakingCost.getText());
+//        double serviceTotal = doubleShippingFee + doubleRakingCost;
+
+//        invoiceTotal.setText(String.format("%.2f", serviceTotal));
+    }
+
+
 
 }
 
