@@ -12,10 +12,10 @@ public class OrderSummaryGUI extends JFrame {
     private JPanel mainPanel;
     private JPanel orderSummaryPanel;
     private JTextArea orderSummaryTextArea;
-
+    // handles order summary GUI functions
     OrderSummaryGUI(JTextField customerNameTextField, JTextField shippingAddressTextField, JLabel shippingFeeLabel,
                     JLabel subtotalLabel, JLabel taxesLabel, JLabel totalLabel) {
-
+        // sets GUI settings
         setContentPane(mainPanel); // opens entire GUI form when run
         setTitle("Order Summary");
         setSize(500, 750);
@@ -26,7 +26,7 @@ public class OrderSummaryGUI extends JFrame {
                 subtotalLabel, taxesLabel, totalLabel);
 
     }
-
+    // sets text from checkOutPanel in gameStoreGUI to Order Summary text area
     private void displayOrderInfo(JTextField customerNameTextField, JTextField shippingAddressTextField,
                                   JLabel shippingFeeLabel, JLabel subtotalLabel, JLabel taxesLabel, JLabel totalLabel) {
 

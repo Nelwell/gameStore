@@ -224,49 +224,47 @@ class GameStoreDB {
 
     }
 
-    // gets result set based on selected category and applied filter on GUI
+    // gets selected category and passes to method to run sql statements
     static Vector<Vector> getCategoriesResultSet(JComboBox<String> CategoriesOptionsBox, JRadioButton PS4RadioButton,
                                                  JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton) {
         // initialize vector
         Vector<Vector> browserData = new Vector<>();
 
-        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
-             Statement createStatement = connection.createStatement()) {
-
             String selectedCategory = (String) CategoriesOptionsBox.getSelectedItem();
 
             if (selectedCategory.equals("All")) {
-                browserData = applySelectedFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton, createStatement,
+                browserData = applySelectedFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton,
                         GET_ALL_CATEGORIES, ALL_PS4_FILTER, ALL_XBOX_FILTER, ALL_NINTENDO_FILTER);
             }
             if (selectedCategory.equals("Consoles")) {
-                browserData = applySelectedFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton, createStatement,
+                browserData = applySelectedFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton,
                         GET_CONSOLES, CONSOLE_PS4_FILTER, CONSOLE_XBOX_FILTER, CONSOLE_NINTENDO_FILTER);
             }
             if (selectedCategory.equals("Accessories")) {
-                browserData = applySelectedFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton, createStatement,
+                browserData = applySelectedFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton,
                         GET_ACCESSORIES, ACCESSORIES_PS4_FILTER, ACCESSORIES_XBOX_FILTER, ACCESSORIES_NINTENDO_FILTER);
             }
             if (selectedCategory.equals("Games")) {
-                browserData = applySelectedFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton, createStatement,
+                browserData = applySelectedFilter(PS4RadioButton, xboxRadioButton, nintendoRadioButton,
                         GET_GAMES, GAMES_PS4_FILTER, GAMES_XBOX_FILTER, GAMES_NINTENDO_FILTER);
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
         return browserData;
     }
 
 
     private static Vector<Vector> applySelectedFilter(JRadioButton PS4RadioButton, JRadioButton xboxRadioButton,
-                                                      JRadioButton nintendoRadioButton, Statement createStatement,
-                                                      String getCategory, String ps4Filter, String xboxFilter,
-                                                      String nintendoFilter) throws SQLException {
-        // data collected from getCategories method
+                                                      JRadioButton nintendoRadioButton, String getCategory,
+                                                      String ps4Filter, String xboxFilter,
+                                                      String nintendoFilter) {
+        // initializes result set
         ResultSet selectedCategoryAndFilter;
+
         // initialize vector to hold filtered list
         Vector<Vector> productInfo;
+
+        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+             Statement createStatement = connection.createStatement()) {
 
         // applies new query based on filter selected on GUI
         selectedCategoryAndFilter  = createStatement.executeQuery(getCategory);
@@ -278,6 +276,9 @@ class GameStoreDB {
             selectedCategoryAndFilter  = createStatement.executeQuery(nintendoFilter);
         }
         productInfo = getProductList(selectedCategoryAndFilter);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return productInfo;
     }
 

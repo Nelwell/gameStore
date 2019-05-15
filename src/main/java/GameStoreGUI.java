@@ -306,7 +306,7 @@ public class GameStoreGUI extends JFrame {
 
 //        // If no selected product
 //        if (selectedProduct == null || selectedProduct.trim().equals("")) {
-//            JOptionPane.showMessageDialog(rootPane, "Please select a product");
+//            JOptionPane.showMessageDialog(mainPanel, "Please select a product");
 //            return;
 //        }
 
