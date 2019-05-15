@@ -2,7 +2,14 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Vector;
 
 public class GameStoreGUI extends JFrame {
@@ -24,7 +31,7 @@ public class GameStoreGUI extends JFrame {
 
         setContentPane(mainPanel); // opens entire GUI form when run
         pack();
-        setTitle("Couch Potato Shopping Application");
+        setTitle("Couch Potato Gaming Shopping Application");
         setExtendedState(JFrame.MAXIMIZED_BOTH); // opens window to fullscreen
 //        setUndecorated(false); // keeps top menu bar for closing/min/maximizing etc.
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // ends program when window is closed
@@ -50,6 +57,9 @@ public class GameStoreGUI extends JFrame {
         categoriesOptionsBox.addItem(games);
 
         productBrowserTable.setAutoCreateRowSorter(true);
+
+        // clears any pre-existing cart items from shopping cart upon running program
+        GameStoreDB.clearShoppingCart();
 
     }
 
@@ -174,6 +184,70 @@ public class GameStoreGUI extends JFrame {
             }
         });
 
+
+        productBrowserTable.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    addProductToCart();
+                    calculateAndDisplayCosts();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+
+        });
+
+        shoppingCartTable.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    deleteProductFromCart();
+                    calculateAndDisplayCosts();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+
+        });
+
+
         addToCartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -193,15 +267,58 @@ public class GameStoreGUI extends JFrame {
         clearCartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GameStoreDB.clearCart();
+                GameStoreDB.clearShoppingCart();
+                configureShoppingCartTable();
+                calculateAndDisplayCosts();
             }
         });
 
-        }
+        placeOrderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+//                HashMap<String, String> map = new HashMap<>();
+                new OrderSummaryGUI(customerNameTextField, shippingAddressTextField, shippingFeeLabel, subtotalLabel,
+                        taxesLabel, totalLabel);
 
-    private void deleteAllFromCart() {
+            }
+        });
 
+//        // button listener to produce order summary
+//        placeOrderButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//
+////                new OrderSummaryGUI();
+//
+////                String noPreviewInvoiceGenerated = "A preview invoice needs to be generated before saving";
+////                // stores title of error message
+////                String title = "Warning!";
+////                // sets error message type to ERROR_MESSAGE
+////                int type = 0;
+////                // calls method to display error message if invoice preview has not been generated before clicking Save button
+////                if (invoicePreviewTextArea.getText().trim().length() == 0) {
+////                    showMessageDialog(noPreviewInvoiceGenerated, title, type);
+////                } else {
+////                    try {
+////                        // assigns format for date String
+////                        DateFormat dFormat = new SimpleDateFormat("MMM_dd_yyyy");
+////                        // formats date value into a String variable
+////                        String dateString = dFormat.format(serviceDateSpinner.getValue());
+////                        // converts date String to Date object type
+////                        Date date = dFormat.parse(dateString);
+////                        // calls createFileName method and passes customer name/date into it
+////                        String filename = InvoiceWriter.createFileName(customerNameTextField.getText(), date);
+////                        InvoiceWriter.writeToFile(filename, invoicePreviewTextArea.getText());
+////                    } catch (
+////                            ParseException pe) {
+////                        pe.printStackTrace();
+////                    }
+////                }
+////            }
+//            });
+//        }
     }
+
 
     private void addProductToCart() {
 
@@ -213,16 +330,13 @@ public class GameStoreGUI extends JFrame {
         String selectedProduct = (String) productBrowserTable.getValueAt(productBrowserTable.getSelectedRow(), 2);
         double productPrice = (double) productBrowserTable.getValueAt(productBrowserTable.getSelectedRow(), 4);
 
-//        // If no selected product blank
+//        // If no selected product
 //        if (selectedProduct == null || selectedProduct.trim().equals("")) {
 //            JOptionPane.showMessageDialog(rootPane, "Please select a product");
 //            return;
 //        }
 
         GameStoreDB.addToCart(productId, productQuantity, selectedProduct, productPrice);
-
-//            //Using a spinner means we are guaranteed to get a number in the range we set, so no validation needed.
-//            int ratingData = (Integer) (ratingSpinner.getValue());
 
         configureShoppingCartTable();
 
@@ -241,9 +355,6 @@ public class GameStoreGUI extends JFrame {
 
         GameStoreDB.deleteFromCart(selectedProduct);
 
-//            //Using a spinner means we are guaranteed to get a number in the range we set, so no validation needed.
-//            int ratingData = (Integer) (ratingSpinner.getValue());
-
         configureShoppingCartTable();
 
     }
@@ -256,11 +367,6 @@ public class GameStoreGUI extends JFrame {
 //
 //    }
 
-
-
-//            String size = (String) gardenSizeComboBox.getSelectedItem();
-//            double notSelected = 0.00;
-//            double mowingCost = GardenServiceData.MOWING;
 
     // calculate amounts in checkOutPanel
     private void calculateAndDisplayCosts() {
@@ -288,7 +394,6 @@ public class GameStoreGUI extends JFrame {
             taxesLabel.setText(String.format("%.2f", emptyCart));
             totalLabel.setText(String.format("%.2f", emptyCart));
         }
-
         updateTotal();
 
     }
