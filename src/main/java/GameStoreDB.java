@@ -7,13 +7,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Vector;
 
+/**
+ * class to handle all database operations.  Takes input from Game Store GUI and uses it to query/update data in the database tables
+ */
+
 // database communications
 class GameStoreDB {
 
-    // gets current stock for product
+    // gets current stock for product *test* -- unused
     private static final String GET_PRODUCT_STOCK = "SELECT stock FROM inventory WHERE product_name LIKE 'PS4 System'";
 
 //    private static final String CREATE_CART_TABLE = "CREATE TABLE shopping_cart (ID integer primary key, QUANTITY integer, PRODUCT text, PRICE double)";
+    // clears shopping cart table when queried
     private static final String CLEAR_CART_TABLE = "DELETE FROM shopping_cart";
 
     // Categorical statement query strings
@@ -46,19 +51,21 @@ class GameStoreDB {
     private static final String GET_ALL_CART_ITEMS = "SELECT * FROM shopping_cart";
 
 
-//    public void insertImage() {
+// couldn't get working...
+
+//    public static void insertImage() {
 //        Connection connection = null;
 //        PreparedStatement statement = null;
 //        FileInputStream inputStream = null;
 //
 //        try {
-//            File image = new File("C:/honda.jpg");
+//            File image = new File("C:\\Users\\User\\gameStore\\ps4Console.jpg");
 //            inputStream = new FileInputStream(image);
 //
 //            connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url); // Connect
-//            statement = connection.prepareStatement("insert into trn_imgs(img_title, img_data) " + "values(?,?)");
-//            statement.setString(1, "Honda Car");
-//            statement.setBinaryStream(2, (InputStream) inputStream, (int)(image.length()));
+//            statement = connection.prepareStatement("insert into inventory (img_title, img_data) " + " values(?,?)");
+//            statement.setString(1, "ps4 Console);
+//            statement.setBinaryStream(2, inputStream, (int)(image.length()));
 //
 //            statement.executeUpdate();
 //
@@ -77,9 +84,9 @@ class GameStoreDB {
 //        }
 //    }
 
-
+    // collects resultSet of all available categories in inventory table
     static ArrayList<String> getCategories() {
-
+        // lists to get and store categories, second list to hold only unique categories
         ArrayList<String> allCategories = new ArrayList<>();
         ArrayList<String> duplicateCategoriesRemoved = new ArrayList<>();
 
@@ -87,13 +94,13 @@ class GameStoreDB {
             Statement statement = connection.createStatement(); // Statements are used to issue queries
 
             String getCategories = "SELECT CATEGORY FROM inventory"; // Query to fetch data
-            ResultSet categories = statement.executeQuery(getCategories); // Use executeQuery. It returns a ResultSet
+            ResultSet categories = statement.executeQuery(getCategories); // returns a ResultSet
 
             while (categories.next()) {  // Have to loop over the ResultSet to read it. Loop reads one row at a time
                 String productName = categories.getString("CATEGORY"); // Can get data from each column, by column name
                 allCategories.add(productName);
             }
-            categories.close(); // Close ResultSet when done using it
+            categories.close(); // Closes ResultSet when done using it
 
         } catch (SQLException sqle) {
             System.out.println(sqle);
@@ -108,7 +115,7 @@ class GameStoreDB {
         return duplicateCategoriesRemoved;
 
     }
-
+    // puts column names in vector for table model
     static Vector getColumnNames() {
 
         Vector<String> colNames = new Vector<>();
@@ -121,12 +128,11 @@ class GameStoreDB {
 
         return colNames;
     }
-
+    // puts shopping cart column names in vector for shopping cart table model
     static Vector getCartColumnNames() {
 
         Vector<String> cartColNames = new Vector<>();
 
-//        colNames.add("Product Image");
         cartColNames.add("ID #");
         cartColNames.add("Quantity");
         cartColNames.add("Product");
@@ -139,18 +145,18 @@ class GameStoreDB {
 
         try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
              Statement statement = connection.createStatement()) {
-
+            // stores all items from query
             ResultSet rs = statement.executeQuery(GET_ALL_CART_ITEMS);
-
+            // initializes vector
             Vector<Vector> vectors = new Vector<>();
-
+            // initialize variables for vector list
             int id;
             int quantity;
             String product;
             double price;
-
+            // loops through each line of result set
             while (rs.next()) {
-
+                // gets associated values from text query
                 id = rs.getInt("ID");
                 quantity = rs.getInt("QUANTITY");
                 product = rs.getString("PRODUCT");
@@ -188,7 +194,7 @@ class GameStoreDB {
 
     }
 
-
+    // runs mySQL query to clear shopping cart table
     static void clearShoppingCart() {
 
         try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
@@ -202,7 +208,7 @@ class GameStoreDB {
 
     }
 
-
+    // runs mySQL query to only delete selected items from shopping cart table
     static void deleteFromCart(int selectedProduct) {
 
         try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
@@ -218,7 +224,7 @@ class GameStoreDB {
 
     }
 
-
+    // gets result set based on selected category and applied filter on GUI
     static Vector<Vector> getCategoriesResultSet(JComboBox<String> CategoriesOptionsBox, JRadioButton PS4RadioButton,
                                                  JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton) {
         // initialize vector
@@ -257,10 +263,12 @@ class GameStoreDB {
                                                       JRadioButton nintendoRadioButton, Statement createStatement,
                                                       String getCategory, String ps4Filter, String xboxFilter,
                                                       String nintendoFilter) throws SQLException {
-
+        // data collected from getCategories method
         ResultSet selectedCategoryAndFilter;
+        // initialize vector to hold filtered list
         Vector<Vector> productInfo;
 
+        // applies new query based on filter selected on GUI
         selectedCategoryAndFilter  = createStatement.executeQuery(getCategory);
         if (PS4RadioButton.isSelected()) {
             selectedCategoryAndFilter  = createStatement.executeQuery(ps4Filter);
@@ -279,14 +287,14 @@ class GameStoreDB {
         Vector<Vector> productInfo  = new Vector<>();
 
         int id;
-        Blob image;
-        String name, platform;
+        String image, name, platform;
         double price;
 
+        // reads lines of result set and adds to appropriate columns
         while (catAndFilter.next()) {
 
             id = catAndFilter.getInt("ID");
-            image = catAndFilter.getBlob("PRODUCT_IMAGE");
+            image = catAndFilter.getString("PRODUCT_IMAGE");
             name = catAndFilter.getString("PRODUCT_NAME");
             platform = catAndFilter.getString("PLATFORM");
             price = catAndFilter.getDouble("PRICE");
@@ -304,23 +312,24 @@ class GameStoreDB {
         return productInfo ;
     }
 
-    static int getAvailableStock(){
-
-        int stockToInt = 0;
-
-        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
-             Statement statement = connection.createStatement()) {
-
-            ResultSet stockResultSet = statement.executeQuery(GET_PRODUCT_STOCK); // Use executeQuery. It returns a ResultSet
-
-            while (stockResultSet.next()) {  // Have to loop over the ResultSet to read it. Loop reads one row at a time
-                String stock = stockResultSet.getString("STOCK"); // Can get data from each column, by column name
-                stockToInt = Integer.parseInt(stock);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return stockToInt;
-    }
+    // unused method to get available stock of item selected
+//    static int getAvailableStock(){
+//
+//        int stockToInt = 0;
+//
+//        try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
+//             Statement statement = connection.createStatement()) {
+//
+//            ResultSet stockResultSet = statement.executeQuery(GET_PRODUCT_STOCK); // Use executeQuery. It returns a ResultSet
+//
+//            while (stockResultSet.next()) {  // Have to loop over the ResultSet to read it. Loop reads one row at a time
+//                String stock = stockResultSet.getString("STOCK"); // Can get data from each column, by column name
+//                stockToInt = Integer.parseInt(stock);
+//            }
+//
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return stockToInt;
+//    }
 }

@@ -9,6 +9,10 @@ import javax.swing.ImageIcon;
 import java.util.ArrayList;
 import java.util.Vector;
 
+/**
+ * GUI class to handle all GameStore GUI interactions. Responsible for displaying GUI and drawing any updates and taking user input
+ */
+
 public class GameStoreGUI extends JFrame {
 
     private JPanel mainPanel;
@@ -28,12 +32,10 @@ public class GameStoreGUI extends JFrame {
 
         setContentPane(mainPanel); // opens entire GUI form when run
 
-
-        pack();
         setTitle("Couch Potato Gaming Shopping Application");
         setExtendedState(JFrame.MAXIMIZED_BOTH); // opens window to fullscreen
-//        setUndecorated(false); // keeps top menu bar for closing/min/maximizing etc.
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // ends program when window is closed
+        pack();
         setVisible(true); // makes window visible when program is run
 
         eventHandlers(); // configure event handlers for GUI interaction
@@ -57,17 +59,16 @@ public class GameStoreGUI extends JFrame {
 
         productBrowserTable.setAutoCreateRowSorter(true);
 
-
-//        JLabel label = new JLabel();
-//        ps4.setImage();
-
         // clears any pre-existing cart items from shopping cart upon running program
         GameStoreDB.clearShoppingCart();
 
     }
 
-
+    // gets data needed for creating product browser Jtable and draws Jtable
+    // **adapted from MOVIEGUI program in class examples**
     private void configureProductTable() {
+
+//        GameStoreDB.insertImage();
 
         // allows for only one row to be selected at a time
         productBrowserTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -77,7 +78,7 @@ public class GameStoreGUI extends JFrame {
         columnNames = GameStoreDB.getColumnNames();
 
         productBrowserTable.setModel(new DefaultTableModel(tableData, columnNames) {
-            Class[] types = { Integer.class, Blob.class, String.class, String.class, Double.class };
+            Class[] types = { Integer.class, String.class, String.class, String.class, Double.class };
 
             @Override
             public Class getColumnClass(int columnIndex) {
@@ -88,11 +89,11 @@ public class GameStoreGUI extends JFrame {
                 return false;
             }
         });
-//        tableModel.fireTableDataChanged();
 
     }
 
-
+    // gets data needed for creating shopping cart Jtable and draws Jtable
+    // **adapted from MOVIEGUI program in class examples**
     private void configureShoppingCartTable() {
 
         // allows for only one row to be selected at a time
@@ -103,6 +104,8 @@ public class GameStoreGUI extends JFrame {
 
         // sets table model and assigns object types to each column in JTable
         shoppingCartTable.setModel(new DefaultTableModel(cartTableData, cartColumnNames) {
+            // overrides default model column types to fit types needed for my table, fixes sorting issue for integers
+            // **adapted from https://stackoverflow.com/questions/9090974/problems-with-jtable-sorting-of-integer-values/9091438**
             Class[] types = { Integer.class, Integer.class, String.class, Double.class };
             // assigns which columns are editable in shopping cart to variable
             boolean[] canEdit = { false, true, false, false };
@@ -137,14 +140,14 @@ public class GameStoreGUI extends JFrame {
 //                }
 //            }
         });
-
-        if (shoppingCartTable.getRowCount() > 0) { //&& removeButton.isSelected()) {
+        // sets first row to be selected in shopping cart by default, makes for fast and easy item removal for successive removals
+        if (shoppingCartTable.getRowCount() > 0) {
             shoppingCartTable.setRowSelectionInterval(0, 0);
         }
 
     }
 
-
+    // make all GUI interactions (boxes, buttons etc.) do something
     private void eventHandlers() {
 
         categoriesOptionsBox.addActionListener(new ActionListener() {
@@ -187,7 +190,7 @@ public class GameStoreGUI extends JFrame {
             }
         });
 
-
+        // listener to add products to cart on double-click **adapted from https://stackoverflow.com/questions/4051659/identifying-double-click-in-java**
         productBrowserTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -196,7 +199,7 @@ public class GameStoreGUI extends JFrame {
                     calculateAndDisplayCosts();
                 }
             }
-
+            // not sure how to remove these additional pieces without throwing errors on this listener
             @Override
             public void mousePressed(MouseEvent e) {
 
@@ -218,7 +221,7 @@ public class GameStoreGUI extends JFrame {
             }
 
         });
-
+        // removes items from shopping cart on double-click
         shoppingCartTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -227,7 +230,7 @@ public class GameStoreGUI extends JFrame {
                     calculateAndDisplayCosts();
                 }
             }
-
+            // not sure how to remove these additional pieces without throwing errors on this listener
             @Override
             public void mousePressed(MouseEvent e) {
 
@@ -275,51 +278,19 @@ public class GameStoreGUI extends JFrame {
                 calculateAndDisplayCosts();
             }
         });
-
+        // calls order summaryGUI class and passes necessary data
         placeOrderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                HashMap<String, String> map = new HashMap<>();
-                new OrderSummaryGUI(customerNameTextField, shippingAddressTextField, shippingFeeLabel, subtotalLabel,
-                        taxesLabel, totalLabel);
-
+                // displays message if fields are blank
+                if (customerNameTextField.getText().isBlank() || shippingAddressTextField.getText().isBlank()) {
+                    JOptionPane.showMessageDialog(mainPanel, "Please fill out Name and Shipping Address fields.");
+                } else {
+                    new OrderSummaryGUI(customerNameTextField, shippingAddressTextField, shippingFeeLabel, subtotalLabel,
+                            taxesLabel, totalLabel);
+                }
             }
         });
-
-//        // button listener to produce order summary
-//        placeOrderButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//
-////                new OrderSummaryGUI();
-//
-////                String noPreviewInvoiceGenerated = "A preview invoice needs to be generated before saving";
-////                // stores title of error message
-////                String title = "Warning!";
-////                // sets error message type to ERROR_MESSAGE
-////                int type = 0;
-////                // calls method to display error message if invoice preview has not been generated before clicking Save button
-////                if (invoicePreviewTextArea.getText().trim().length() == 0) {
-////                    showMessageDialog(noPreviewInvoiceGenerated, title, type);
-////                } else {
-////                    try {
-////                        // assigns format for date String
-////                        DateFormat dFormat = new SimpleDateFormat("MMM_dd_yyyy");
-////                        // formats date value into a String variable
-////                        String dateString = dFormat.format(serviceDateSpinner.getValue());
-////                        // converts date String to Date object type
-////                        Date date = dFormat.parse(dateString);
-////                        // calls createFileName method and passes customer name/date into it
-////                        String filename = InvoiceWriter.createFileName(customerNameTextField.getText(), date);
-////                        InvoiceWriter.writeToFile(filename, invoicePreviewTextArea.getText());
-////                    } catch (
-////                            ParseException pe) {
-////                        pe.printStackTrace();
-////                    }
-////                }
-////            }
-//            });
-//        }
     }
 
 
@@ -362,24 +333,17 @@ public class GameStoreGUI extends JFrame {
 
     }
 
-//    private void updateTable() {
-//
-//        Vector data = GameStoreDB.getCategoriesResultSet(categoriesOptionsBox, ps4RadioButton, xboxRadioButton,
-//                nintendoRadioButton);
-//        DefaultTableModel.setDataVector(data, columnNames);
-//
-//    }
-
 
     // calculate amounts in checkOutPanel
     private void calculateAndDisplayCosts() {
 
+        // loop to calculate cart total
         double subtotal = 0;
         for (int i = 0; i < shoppingCartTable.getRowCount(); i++){
             double amount = (double) shoppingCartTable.getValueAt(i, 3);
             subtotal += amount;
         }
-
+        // checkOutPanel values
         double emptyCart = 0.00;
         double shipFee = Fees.SHIPPING_FEE;
         double taxRate = Fees.TAX_RATE;
@@ -397,19 +361,8 @@ public class GameStoreGUI extends JFrame {
             taxesLabel.setText(String.format("%.2f", emptyCart));
             totalLabel.setText(String.format("%.2f", emptyCart));
         }
-        updateTotal();
 
     }
-
-
-    private void updateTotal() {
-
-        double doubleShippingFee = Double.valueOf(this.shippingFeeLabel.getText());
-
-//        invoiceTotal.setText(String.format("%.2f", serviceTotal));
-    }
-
-
 
 }
 

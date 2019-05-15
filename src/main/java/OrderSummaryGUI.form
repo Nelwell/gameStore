@@ -46,7 +46,11 @@
             <children>
               <component id="3e1a3" class="javax.swing.JTextArea" binding="orderSummaryTextArea">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <background color="-16102001"/>
+                  <font name="Segoe UI" size="14" style="1"/>
+                  <foreground color="-2700074"/>
+                </properties>
               </component>
             </children>
           </scrollpane>
