@@ -1,4 +1,8 @@
 import javax.swing.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -42,6 +46,37 @@ class GameStoreDB {
     private static final String GET_ALL_CART_ITEMS = "SELECT * FROM shopping_cart";
 
 
+//    public void insertImage() {
+//        Connection connection = null;
+//        PreparedStatement statement = null;
+//        FileInputStream inputStream = null;
+//
+//        try {
+//            File image = new File("C:/honda.jpg");
+//            inputStream = new FileInputStream(image);
+//
+//            connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url); // Connect
+//            statement = connection.prepareStatement("insert into trn_imgs(img_title, img_data) " + "values(?,?)");
+//            statement.setString(1, "Honda Car");
+//            statement.setBinaryStream(2, (InputStream) inputStream, (int)(image.length()));
+//
+//            statement.executeUpdate();
+//
+//        } catch (FileNotFoundException e) {
+//            System.out.println("FileNotFoundException: - " + e);
+//        } catch (SQLException e) {
+//            System.out.println("SQLException: - " + e);
+//        } finally {
+//
+//            try {
+//                connection.close();
+//                statement.close();
+//            } catch (SQLException e) {
+//                System.out.println("SQLException Finally: - " + e);
+//            }
+//        }
+//    }
+
 
     static ArrayList<String> getCategories() {
 
@@ -76,7 +111,7 @@ class GameStoreDB {
 
     static Vector getColumnNames() {
 
-        Vector<String> colNames = new Vector<String>();
+        Vector<String> colNames = new Vector<>();
 
         colNames.add("ID #");
         colNames.add("Product Image");
@@ -89,7 +124,7 @@ class GameStoreDB {
 
     static Vector getCartColumnNames() {
 
-        Vector<String> cartColNames = new Vector<String>();
+        Vector<String> cartColNames = new Vector<>();
 
 //        colNames.add("Product Image");
         cartColNames.add("ID #");
@@ -186,7 +221,7 @@ class GameStoreDB {
 
     static Vector<Vector> getCategoriesResultSet(JComboBox<String> CategoriesOptionsBox, JRadioButton PS4RadioButton,
                                                  JRadioButton xboxRadioButton, JRadioButton nintendoRadioButton) {
-
+        // initialize vector
         Vector<Vector> browserData = new Vector<>();
 
         try (Connection connection = DriverManager.getConnection(GameStoreConfigDB.gameStoreDb_url);
@@ -220,20 +255,21 @@ class GameStoreDB {
 
     private static Vector<Vector> applySelectedFilter(JRadioButton PS4RadioButton, JRadioButton xboxRadioButton,
                                                       JRadioButton nintendoRadioButton, Statement createStatement,
-                                                      String getAllCategories, String allPs4Filter, String allXboxFilter,
-                                                      String allNintendoFilter) throws SQLException {
+                                                      String getCategory, String ps4Filter, String xboxFilter,
+                                                      String nintendoFilter) throws SQLException {
 
-        ResultSet selectedCategoryAndFilter ;
+        ResultSet selectedCategoryAndFilter;
         Vector<Vector> productInfo;
-        selectedCategoryAndFilter  = createStatement.executeQuery(getAllCategories);
+
+        selectedCategoryAndFilter  = createStatement.executeQuery(getCategory);
         if (PS4RadioButton.isSelected()) {
-            selectedCategoryAndFilter  = createStatement.executeQuery(allPs4Filter);
+            selectedCategoryAndFilter  = createStatement.executeQuery(ps4Filter);
         } else if (xboxRadioButton.isSelected()) {
-            selectedCategoryAndFilter  = createStatement.executeQuery(allXboxFilter);
+            selectedCategoryAndFilter  = createStatement.executeQuery(xboxFilter);
         } else if (nintendoRadioButton.isSelected()) {
-            selectedCategoryAndFilter  = createStatement.executeQuery(allNintendoFilter);
+            selectedCategoryAndFilter  = createStatement.executeQuery(nintendoFilter);
         }
-        productInfo = getProductList(selectedCategoryAndFilter );
+        productInfo = getProductList(selectedCategoryAndFilter);
         return productInfo;
     }
 
@@ -243,13 +279,14 @@ class GameStoreDB {
         Vector<Vector> productInfo  = new Vector<>();
 
         int id;
-        String image, name, platform;
+        Blob image;
+        String name, platform;
         double price;
 
         while (catAndFilter.next()) {
 
             id = catAndFilter.getInt("ID");
-            image = catAndFilter.getString("PRODUCT_IMAGE");
+            image = catAndFilter.getBlob("PRODUCT_IMAGE");
             name = catAndFilter.getString("PRODUCT_NAME");
             platform = catAndFilter.getString("PLATFORM");
             price = catAndFilter.getDouble("PRICE");

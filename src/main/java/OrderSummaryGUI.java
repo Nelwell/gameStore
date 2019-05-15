@@ -38,11 +38,11 @@ public class OrderSummaryGUI extends JFrame {
                                   JLabel shippingFeeLabel, JLabel subtotalLabel, JLabel taxesLabel, JLabel totalLabel) {
 
 
-        orderSummaryTextArea.setText("Customer Name: " + customerNameTextField.getText() + "\n"
-        + "Shipping Address: " + shippingAddressTextField.getText() + "\n"
-        + "Shipping Fee: " + shippingFeeLabel.getText() + "\n"
-        + "Subtotal: $" + subtotalLabel.getText() + "\n"
-        + "Taxes: $" + taxesLabel.getText() + "\n"
+        orderSummaryTextArea.setText("Customer Name: " + customerNameTextField.getText() + "\n\n"
+        + "Shipping Address: " + shippingAddressTextField.getText() + "\n\n"
+        + "Shipping Fee: " + shippingFeeLabel.getText() + "\n\n"
+        + "Subtotal: $" + subtotalLabel.getText() + "\n\n"
+        + "Taxes: $" + taxesLabel.getText() + "\n\n"
         + "Total: $" + totalLabel.getText());
 
 

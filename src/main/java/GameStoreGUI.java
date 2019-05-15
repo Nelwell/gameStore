@@ -4,12 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.sql.Blob;
+import javax.swing.ImageIcon;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Vector;
 
 public class GameStoreGUI extends JFrame {
@@ -30,6 +27,8 @@ public class GameStoreGUI extends JFrame {
     GameStoreGUI() {
 
         setContentPane(mainPanel); // opens entire GUI form when run
+
+
         pack();
         setTitle("Couch Potato Gaming Shopping Application");
         setExtendedState(JFrame.MAXIMIZED_BOTH); // opens window to fullscreen
@@ -58,6 +57,10 @@ public class GameStoreGUI extends JFrame {
 
         productBrowserTable.setAutoCreateRowSorter(true);
 
+
+//        JLabel label = new JLabel();
+//        ps4.setImage();
+
         // clears any pre-existing cart items from shopping cart upon running program
         GameStoreDB.clearShoppingCart();
 
@@ -69,12 +72,12 @@ public class GameStoreGUI extends JFrame {
         // allows for only one row to be selected at a time
         productBrowserTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        Vector<Vector> tableData = GameStoreDB.getCategoriesResultSet(categoriesOptionsBox, ps4RadioButton, xboxRadioButton,
-                nintendoRadioButton);
+        Vector<Vector> tableData = GameStoreDB.getCategoriesResultSet(categoriesOptionsBox, ps4RadioButton,
+                xboxRadioButton, nintendoRadioButton);
         columnNames = GameStoreDB.getColumnNames();
 
         productBrowserTable.setModel(new DefaultTableModel(tableData, columnNames) {
-            Class[] types = { Integer.class, String.class, String.class, String.class, Double.class };
+            Class[] types = { Integer.class, Blob.class, String.class, String.class, Double.class };
 
             @Override
             public Class getColumnClass(int columnIndex) {
@@ -401,11 +404,7 @@ public class GameStoreGUI extends JFrame {
 
     private void updateTotal() {
 
-//        double taxes = Fees.TAXES;
-
         double doubleShippingFee = Double.valueOf(this.shippingFeeLabel.getText());
-//        double doubleSubtotal = Double.valueOf(this.leafRakingCost.getText());
-//        double serviceTotal = doubleShippingFee + doubleRakingCost;
 
 //        invoiceTotal.setText(String.format("%.2f", serviceTotal));
     }
